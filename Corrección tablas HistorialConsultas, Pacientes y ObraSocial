@@ -1,0 +1,28 @@
+USE DB_TPINTEGRADOR
+GO
+ALTER TABLE HistorialConsultas
+DROP CONSTRAINT FK_HistorialConsultas_Pacientes,
+     CONSTRAINT FK_HistorialConsultas_Turnos,
+     CONSTRAINT FK_HistorialConsultas_ConsultoriosxDoctor
+GO
+
+DROP TABLE HistorialConsultas
+GO
+
+ALTER TABLE Pacientes
+DROP COLUMN ObraSocial
+GO
+
+ALTER TABLE Pacientes
+ADD IDObraSocial INT NOT NULL
+GO
+
+CREATE TABLE ObraSocial(
+    IDObraSocial int primary key identity(1,1),
+    Nombre varchar(70)
+)
+GO
+
+ALTER TABLE Pacientes
+ADD CONSTRAINT FK_Pacientes_ObraaSocial FOREIGN KEY(IDObraSocial) REFERENCES ObraSocial(IDObraSocial)
+GO
