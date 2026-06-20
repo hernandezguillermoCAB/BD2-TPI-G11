@@ -1,140 +1,131 @@
-CREATE DATABASE DB_TPINTEGRADOR
+CREATE DATABASE DB_TPINTEGRADOR;
 
-USE  DB_TPINTEGRADOR
-GO
+CREATE TABLE Roles (
+    IdRol INT IDENTITY(1,1),
+    Nombre VARCHAR(20) NOT NULL UNIQUE,
+    CONSTRAINT PK_Roles PRIMARY KEY (IdRol),
+);
 
-CREATE TABLE Especialidades(
-    IDEspecialidad int primary key identity(1,1),
-    Nombre varchar(35)
-
-)
-
-CREATE TABLE Doctores
-(
-     IDDoctor int identity(1,1) primary key,
-     IDEspecialidad int not null,
-     Nombre varchar(30) not null,
-     Apellido varchar(30) not null,
-     Matricula varchar(20) not null,
-     Telefono varchar(15) not null,
-     Mail varchar (70) not null unique,
-
-    CONSTRAINT FK_Doctores_Especialidades FOREIGN KEY(IDEspecialidad) REFERENCES Especialidades(IDEspecialidad)
-)
-
-CREATE TABLE Pacientes
-(
-    IDPaciente int identity(1,1) primary key,
-    DNI varchar(10) not null unique,
-    Nombre varchar(30) not null,
-    Apellido varchar(30) not null,
-    FechaNacimiento date not null,
-    Telefono varchar(20) not null unique,
-    Mail varchar(70) not null unique,
-    ObraSocial varchar(20) not null
-
-)
-
-CREATE TABLE Consultorios
-(
-    IDConsultorio int primary key identity(1,1),
-    Direccion varchar(45) null,
-    Telefono varchar(20) not null,
-    Mail varchar(70) not null unique    
-
-)
+CREATE TABLE ObraSocial (
+    IDObraSocial INT IDENTITY(1,1),
+    Nombre VARCHAR(50) NOT NULL,
+    CONSTRAINT PK_ObraSocial PRIMARY KEY (IDObraSocial)
+);
 
 
-CREATE TABLE ConsultoriosxDoctor
-(
-    IDConsultoriosxDoc int identity(1,1) primary key,
-    IDDoctor int not null,
-    IDConsultorio int not null,
-    FechaContratacion date not null,
-    FechaFinContrat date null,
+CREATE TABLE Especialidades (
+    IDEspecialidad INT IDENTITY(1,1),
+    Nombre VARCHAR(50) NOT NULL,
+    CONSTRAINT PK_Especialidades PRIMARY KEY (IDEspecialidad)
+);
 
-    CONSTRAINT FK_ConsuloriosxDoctor_Doctores FOREIGN KEY (IDDoctor) REFERENCES Doctores(IDDoctor),
-    CONSTRAINT FK_ConsultoriosxDoctor_Consultorio FOREIGN KEY (IDConsultorio) REFERENCES Consultorios(IDConsultorio)
-)
+CREATE TABLE EstadosTurnos (
+    IDEstado INT IDENTITY(1,1),
+    Nombre VARCHAR(30) NOT NULL,
+    CONSTRAINT PK_EstadosTurnos PRIMARY KEY (IDEstado)
+);
 
-CREATE TABLE EstadosTurnos
-(
-    IDEstado int identity(1,1) primary key,
-    Nombre varchar(30) not null
-)
+CREATE TABLE Consultorios (
+    IDConsultorio INT IDENTITY(1,1),
+    Direccion VARCHAR(100) NOT NULL,
+    Telefono VARCHAR(20) NULL,
+    Mail VARCHAR(70) NULL,
+    CONSTRAINT PK_Consultorios PRIMARY KEY (IDConsultorio)
+);
 
+CREATE TABLE Usuarios (
+    IdUsuario INT IDENTITY(1,1),
+    IdRol INT NOT NULL,
+    NombreUsuario VARCHAR(50) NOT NULL UNIQUE,
+    Contrasenia VARCHAR(100) NOT NULL,
+    CONSTRAINT PK_Usuarios PRIMARY KEY (IdUsuario),
+    CONSTRAINT FK_Usuarios_Roles FOREIGN KEY (IdRol) REFERENCES Roles(IdRol)
+);
 
+CREATE TABLE Doctores (
+    IDDoctor INT IDENTITY(1,1),
+    IDEspecialidad INT NOT NULL,
+    Nombre VARCHAR(30) NOT NULL,
+    Apellido VARCHAR(30) NOT NULL,
+    Matricula VARCHAR(20) NOT NULL,
+    Telefono VARCHAR(15) NULL,
+    Mail VARCHAR(70) NOT NULL,
+    IdUsuario INT NULL,
+    Activo BIT NOT NULL DEFAULT 1,
+    CONSTRAINT PK_Doctores PRIMARY KEY (IDDoctor),
+    CONSTRAINT FK_Doctores_Especialidades FOREIGN KEY (IDEspecialidad) REFERENCES Especialidades(IDEspecialidad),
+    CONSTRAINT FK_Doctores_Usuarios FOREIGN KEY (IdUsuario) REFERENCES Usuarios(IdUsuario)
+);
 
-CREATE TABLE Turnos
-(
-    IDTurno int primary key identity(1,1),
-    IDPaciente int not null,
-    IDConsultoriosxDoctor int not null,
-    IDEstado int not null,
-    Fecha date not null,
-    Hora Time not null,
+CREATE TABLE Pacientes (
+    IDPaciente INT IDENTITY(1,1),
+    DNI INT NOT NULL UNIQUE,
+    Nombre VARCHAR(30) NOT NULL,
+    Apellido VARCHAR(30) NOT NULL,
+    FechaNacimiento DATE NOT NULL,
+    Telefono INT NULL,
+    Mail VARCHAR(70) NOT NULL,
+    IDObraSocial INT NULL,
+    IdUsuario INT NULL,
+    CONSTRAINT PK_Pacientes PRIMARY KEY (IDPaciente),
+    CONSTRAINT FK_Pacientes_ObraSocial FOREIGN KEY (IDObraSocial) REFERENCES ObraSocial(IDObraSocial),
+    CONSTRAINT FK_Pacientes_Usuarios FOREIGN KEY (IdUsuario) REFERENCES Usuarios(IdUsuario)
+);
 
-    CONSTRAINT FK_Turnos_Pacientes FOREIGN KEY (IDPaciente) REFERENCES Pacientes(IDPaciente),
-    CONSTRAINT FK_Turnos_Estados FOREIGN KEY (IDEstado) REFERENCES EstadosTurnos(IDEstado),
-    CONSTRAINT FK_Turnos_ConsultoriosxDoctor FOREIGN KEY (IDConsultoriosxDoctor) REFERENCES ConsultoriosxDoctor(IDConsultoriosxDoc)
+CREATE TABLE DoctoresxObraSocial (
+    IDDoctor INT NOT NULL,
+    IDObraSocial INT NOT NULL,
+    FechaAlta DATE NOT NULL DEFAULT CAST(GETDATE() AS DATE),
+    FechaBaja DATE NULL,
+    CONSTRAINT PK_DoctoresxObraSocial PRIMARY KEY (IDDoctor, IDObraSocial),
+    CONSTRAINT FK_DxOS_Doctores FOREIGN KEY (IDDoctor) REFERENCES Doctores(IDDoctor),
+    CONSTRAINT FK_DxOS_ObraSocial FOREIGN KEY (IDObraSocial) REFERENCES ObraSocial(IDObraSocial)
+);
 
-)
+CREATE TABLE ConsultoriosxDoctor (
+    IDConsultoriosxDoc INT IDENTITY(1,1), 
+    IDDoctor INT NOT NULL,
+    IDConsultorio INT NOT NULL,
+    FechaContratacion DATE NOT NULL,
+    FechaFinContrat DATE NULL,
+    CONSTRAINT PK_ConsultoriosxDoctor PRIMARY KEY (IDConsultoriosxDoc),
+    CONSTRAINT FK_CxD_Doctores FOREIGN KEY (IDDoctor) REFERENCES Doctores(IDDoctor),
+    CONSTRAINT FK_CxD_Consultorios FOREIGN KEY (IDConsultorio) REFERENCES Consultorios(IDConsultorio)
+);
 
-CREATE TABLE GestionTurnos
-(
-    IDGestion int identity(1,1) primary key,
-    IDTurno int not null,
-    FechaCambio date not null,
-    IDEstadoAnterior int not null,
-    IDEstadoActual int not null,
-    Motivo varchar(50) null,
+CREATE TABLE AgendaDoctor (
+    IDAgenda INT IDENTITY(1,1),
+    IDConsultoriosxDoctor INT NOT NULL, 
+    DiaSemana TINYINT NOT NULL, 
+    HoraInicio TIME NOT NULL,
+    HoraFin TIME NOT NULL,
+    CONSTRAINT PK_AgendaDoctor PRIMARY KEY (IDAgenda),
+    CONSTRAINT CK_DiaSemana CHECK (DiaSemana BETWEEN 1 AND 7),
+    CONSTRAINT FK_Agenda_ConsultorioDoc FOREIGN KEY (IDConsultoriosxDoctor) REFERENCES ConsultoriosxDoctor(IDConsultoriosxDoc)
+);
 
-    CONSTRAINT FK_Gestiones_Turnos FOREIGN KEY (IDTurno) REFERENCES Turnos(IDTurno),
-    CONSTRAINT FK_Gestion_EstadosAnt FOREIGN KEY (IDEstadoAnterior) REFERENCES EstadosTurnos(IDEstado),
-    CONSTRAINT FK_Gestion_EstadoAct FOREIGN KEY (IDEstadoActual) REFERENCES EstadosTurnos (IDEstado)
-)
+CREATE TABLE Turnos (
+    IDTurno INT IDENTITY(1,1),
+    IDConsultoriosxDoctor INT NOT NULL,
+    IDEstado INT NOT NULL,
+    Fecha DATE NOT NULL,
+    Hora TIME NOT NULL,
+    IDPaciente INT NOT NULL,
+    CONSTRAINT PK_Turnos PRIMARY KEY (IDTurno),
+    CONSTRAINT FK_Turnos_ConsultoriosxDoctor FOREIGN KEY (IDConsultoriosxDoctor) REFERENCES ConsultoriosxDoctor(IDConsultoriosxDoc),
+    CONSTRAINT FK_Turnos_EstadosTurnos FOREIGN KEY (IDEstado) REFERENCES EstadosTurnos(IDEstado),
+    CONSTRAINT FK_Turnos_Pacientes FOREIGN KEY (IDPaciente) REFERENCES Pacientes(IDPaciente)
+);
 
-
-
-
-CREATE TABLE AgendaDoctor
-(
-    IDAgenda int identity(1,1) primary key,
-    IDConsultoriosxDoctor int not null,
-    DiasAtencion varchar (50) not null,
-    HoraInicio time not null,
-    HoraFin time not null,
-
-    CONSTRAINT FK_AgendaDoctor_ConsultoriosxDoctor FOREIGN KEY (IDConsultoriosxDoctor) REFERENCES ConsultoriosxDoctor(IDConsultoriosxDoc)
-
-)
-
-
-CREATE TABLE HistorialConsultas
-(
-    IDHistorial int identity(1,1) primary key,
-    IDPaciente int not null,
-    IDTurno int not null,
-    IDConsultoriosxDoctor int not null,
-    Fecha date not null,
-    Diagnostico varchar(200) null,
-
-    CONSTRAINT FK_HistorialConsultas_Pacientes FOREIGN KEY(IDPaciente) REFERENCES Pacientes(IDPaciente),
-    CONSTRAINT FK_HistorialConsultas_Turnos FOREIGN KEY (IDTurno) REFERENCES Turnos(IDTurno),
-    CONSTRAINT FK_HistorialConsultas_ConsultoriosxDoctor FOREIGN KEY (IDConsultoriosxDoctor) REFERENCES ConsultoriosxDoctor(IDConsultoriosxDoc)
- 
-
-)
-
-CREATE TABLE ResultadosLaboratorio
-(
-    IDResultados int identity(1,1) primary key,
-    IDPaciente int not null,
-    IDConsultorio int not null,
-    Estado varchar(30) not null,
-    FechaResultado date not null,
-    Observaciones varchar(200) null,
-
-    CONSTRAINT FK_ResultadosLaboratorio_Pacientes FOREIGN KEY (IDPaciente) REFERENCES Pacientes(IDPaciente),
-    CONSTRAINT FK_ResultadosLaboratorio_Consultorios FOREIGN KEY (IDConsultorio) REFERENCES Consultorios(IDConsultorio)
-)
+CREATE TABLE GestionTurnos(
+    IDGestion int IDENTITY(1,1) NOT NULL,
+    IDTurno int NOT NULL,
+    FechaCambio date NOT NULL,
+    IDEstadoAnterior int NOT NULL,
+    IDEstadoActual int NOT NULL,
+    Motivo varchar(50) NULL,
+    CONSTRAINT PK_GestionTurnos PRIMARY KEY (IDGestion),
+    CONSTRAINT FK_Gestion_EstadoAct FOREIGN KEY(IDEstadoActual) REFERENCES EstadosTurnos(IDEstado),
+    CONSTRAINT FK_Gestion_EstadosAnt FOREIGN KEY(IDEstadoAnterior) REFERENCES EstadosTurnos(IDEstado),
+    CONSTRAINT FK_Gestiones_Turnos FOREIGN KEY(IDTurno) REFERENCES Turnos(IDTurno)
+);
