@@ -1,0 +1,42 @@
+INSERT INTO ObraSocial
+VALUES  ('OSDE'),
+        ('PAMI')
+
+
+
+INSERT INTO Roles(Nombre)
+VALUES  ('Medico'),
+        ('Paciente'),
+        ('Admin')
+
+INSERT INTO Usuarios(IdRol,NombreUsuario,Contrasenia)
+VALUES (2,'SLopez',2222)
+
+
+USE DB_TPINTEGRADOR
+GO
+INSERT INTO Doctores(IDEspecialidad,Nombre,Apellido,Matricula,Telefono,Mail,IdUsuario,Activo)
+VALUES (2,'Juan','Perez','B123','+542222','jperez@mail.com',1,0)
+
+INSERT INTO Pacientes(DNI,Nombre,Apellido,FechaNacimiento,Telefono,Mail,IDObraSocial,IdUsuario)
+VALUES (12345,'Santiago','Lopez','1/1/2000',112345,'slopez@gmail.com',1,2)
+
+INSERT INTO EstadosTurnos(Nombre)
+VALUES  ('Confirmado'),
+        ('Cancelado'),
+        ('Pendiente'),
+        ('No asistio'),
+        ('Atendido'),
+        ('Reprogamado')
+
+INSERT INTO Consultorios(Direccion,Telefono,Mail)
+VALUES  ('Av.Corrientes 123,Buenos Aires','+542366','medicus@gmail.com'),
+        ('Av. Las Heras 2456,Palermo, Buenos Aires','+5412345','consult@gmail.com')
+
+
+INSERT INTO ConsultoriosxDoctor(IDDoctor,IDConsultorio,FechaContratacion)
+VALUES (3,2,'1/1/2026')
+
+
+INSERT INTO Turnos(IDConsultoriosxDoctor,IDEstado,Fecha,Hora,IDPaciente)
+VALUES (5,3,'2026-06-20','16:00',1)
