@@ -1,0 +1,21 @@
+USE DB_TPINTEGRADOR;
+GO
+
+ALTER TABLE Doctores
+DROP CONSTRAINT FK_Doctores_ObraSocial;
+GO
+
+ALTER TABLE Doctores
+DROP COLUMN IDObraSocial;
+GO
+
+CREATE TABLE DoctoresxObraSocial (
+    IDDoctor INT NOT NULL,
+    IDObraSocial INT NOT NULL,
+    FechaAlta DATE NULL,
+    FechaBaja DATE NULL,
+    CONSTRAINT PK_DoctoresxObraSocial PRIMARY KEY (IDDoctor, IDObraSocial),
+    CONSTRAINT FK_DxOS_Doctor FOREIGN KEY (IDDoctor) REFERENCES Doctores(IDDoctor),
+    CONSTRAINT FK_DxOS_ObraSocial FOREIGN KEY (IDObraSocial) REFERENCES ObraSocial(IDObraSocial)
+);
+GO
