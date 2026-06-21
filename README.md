@@ -22,10 +22,11 @@ La base permite a los usuarios:
   - Turnos médicos
    
   🔧Funciones del sistema.
-    Procedimientos almacenados:
-  - sp_CancelarTurnos.
-  - sp_FiltrarxEspecialidad.
-  - sp_AgendarTurno
+
+Procedimientos almacenados:
+- sp_CancelarTurnos.
+- sp_FiltrarxEspecialidad.
+- sp_AgendarTurno
   
 Triggers:
 - TR_ImpedirTurnoDoble.
