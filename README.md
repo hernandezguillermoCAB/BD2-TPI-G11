@@ -37,10 +37,10 @@ Triggers:
 - tr_CheckDoctorActivo.
 - TR_ValidarCoberturaTurno.
 
-   Vistas:
-  - vw_TurnosDelDia
-  - vw_ConsultoriosxDoctor
-  - vw_ObraSocialxDoctor
+Vistas:
+- vw_TurnosDelDia
+- vw_ConsultoriosxDoctor
+- vw_ObraSocialxDoctor
      
      
   
