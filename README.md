@@ -11,25 +11,27 @@ en el año 2026 por los integrantes:
   - Ver los médicos disponibles según direcciones y especialidades.
   - Ver las obras sociales que atienden los doctores.
   - Cancelar y reagendar turnos.
- 
-    La base de datos respalda la lógica de:
-    - Doctores
-    - Pacientes
-    - Usuarios con sus roles
-    - Consultorios
-    - Obras Sociales
-    - Especialidades médicas
-    - Turnos médicos
+
+   La base de datos respalda la lógica de:
+  - Doctores
+  - Pacientes
+  - Usuarios con sus roles
+  - Consultorios
+  - Obras Sociales
+  - Especialidades médicas
+  - Turnos médicos
    
   💻 Funciones del sistema.
     Procedimientos almacenados:
       - sp_CancelarTurnos.
       - sp_FiltrarxEspecialidad.
       - sp_AgendarTurno
+  
     Triggers:
       - TR_ImpedirTurnoDoble.
       - tr_CheckDoctorActivo.
       - TR_ValidarCoberturaTurno.
+  
     Vistas:
       - vw_TurnosDelDia
       - vw_ConsultoriosxDoctor
