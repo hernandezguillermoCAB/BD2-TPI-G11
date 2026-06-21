@@ -23,19 +23,19 @@ en el año 2026 por los integrantes:
    
   💻 Funciones del sistema.
     Procedimientos almacenados:
-      - sp_CancelarTurnos.
-      - sp_FiltrarxEspecialidad.
-      - sp_AgendarTurno
+  - sp_CancelarTurnos.
+  - sp_FiltrarxEspecialidad.
+  - sp_AgendarTurno
   
-    Triggers:
-      - TR_ImpedirTurnoDoble.
-      - tr_CheckDoctorActivo.
-      - TR_ValidarCoberturaTurno.
-  
-    Vistas:
-      - vw_TurnosDelDia
-      - vw_ConsultoriosxDoctor
-      - vw_ObraSocialxDoctor
+Triggers:
+- TR_ImpedirTurnoDoble.
+- tr_CheckDoctorActivo.
+- TR_ValidarCoberturaTurno.
+
+   Vistas:
+  - vw_TurnosDelDia
+  - vw_ConsultoriosxDoctor
+  - vw_ObraSocialxDoctor
      
      
   
