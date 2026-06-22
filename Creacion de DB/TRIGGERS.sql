@@ -20,43 +20,39 @@ END
 --********************************************
 
   CREATE TRIGGER tr_CheckDoctorActivo ON Turnos
-    AFTER INSERT
-        AS 
-    BEGIN TRY
-    BEGIN TRANSACTION
-    DECLARE @IDTurno INT,
-            @IDConsultorio INT,
-            @IDEstado INT,
-            @Fecha DATE,
-            @Hora TIME(7),
-            @IDPaciente INT,
-            @Activo BIT
-            SELECT  @IDTurno = IDTurno,
-                    @IDConsultorio = IDConsultoriosxDoctor,
-                    @IDEstado = IDEstado,
-                    @Fecha = Fecha,
-                    @Hora = Hora,
-                    @IDPaciente = IDPaciente
-            FROM INSERTED
-            SELECT @Activo = D.Activo
-            FROM Doctores D
-            INNER JOIN ConsultoriosxDoctor CD ON
-            D.IDDoctor = CD.IDDoctor
-            INNER JOIN INSERTED I ON
-            CD.IDConsultoriosxDoc = I.IDConsultoriosxDoctor
-            IF(@Activo = 0 OR @Activo IS NULL)
-            BEGIN
-            RAISERROR('El doctor solicitado no está activo.',16,1)
-            ROLLBACK TRANSACTION
-            RETURN
-            END
-            COMMIT TRANSACTION
-    END TRY
-    BEGIN CATCH
-    RAISERROR('Surgió un error inesperado.',16,1)
-    ROLLBACK TRANSACTION
-    RETURN
-END CATCH
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @IDConsultorio INT,
+            @IDDOCTOR INT,
+            @Activo BIT;
+
+    SELECT @IDConsultorio = IDConsultoriosxDoctor
+    FROM INSERTED;
+
+    SELECT @IDDOCTOR = CD.IDDoctor
+    FROM ConsultoriosxDoctor CD
+    WHERE CD.IDConsultoriosxDoc = @IDConsultorio;
+
+    IF(@IDDOCTOR IS NULL)
+    BEGIN
+        RAISERROR('No existe doctor asociado al consultorio ingresado.',16,1);
+        ROLLBACK TRANSACTION; 
+        RETURN;
+    END
+
+    SELECT @Activo = Activo
+    FROM Doctores
+    WHERE IDDoctor = @IDDOCTOR;
+
+    IF(@Activo = 0)
+    BEGIN
+        RAISERROR('El doctor solicitado no se encuentra activo.',16,1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+END;
+
 
 --********************************************
 
