@@ -15,7 +15,7 @@ BEGIN
 
     -- guardar el historial en GestionTurnos
     INSERT INTO GestionTurnos (IDTurno, FechaCambio, IDEstadoAnterior, IDEstadoActual, Motivo)
-    VALUES (@IDTurno, CAST(GETDATE() AS DATE), @IDEstadoAnterior, 2, @Motivo);
+    VALUES (@IDTurno, CAST(GETDATE() AS DATE), @IDEstadoAnterior, 3, @Motivo);
     UPDATE Turnos
     SET IDEstado = 3 --id turno cancelado
     WHERE IDTurno = @IDTurno;
