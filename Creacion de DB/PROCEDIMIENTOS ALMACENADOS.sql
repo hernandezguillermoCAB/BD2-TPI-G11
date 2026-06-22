@@ -17,7 +17,7 @@ BEGIN
     INSERT INTO GestionTurnos (IDTurno, FechaCambio, IDEstadoAnterior, IDEstadoActual, Motivo)
     VALUES (@IDTurno, CAST(GETDATE() AS DATE), @IDEstadoAnterior, 2, @Motivo);
     UPDATE Turnos
-    SET IDEstado = 2 --id turno cancelado
+    SET IDEstado = 3 --id turno cancelado
     WHERE IDTurno = @IDTurno;
 END
 
