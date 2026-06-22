@@ -20,15 +20,17 @@ VALUES
 
 INSERT INTO Usuarios (IdRol, NombreUsuario, Contrasenia)
 VALUES
-(2, 'dr.juan', '1234'),
-(2, 'dr.maria', '1234'),
-(3, 'pac.carlos', '1234'),
-(3, 'pac.luisa', '1234')
+(2, 'dr.juan', '1234'),     
+(2, 'dr.maria', '1234'),    
+(3, 'pac.carlos', '1234'),  
+(3, 'pac.luisa', '1234'),   
+(2, 'dr.inactivo', '1234')  
 
 INSERT INTO Doctores (IDEspecialidad, Nombre, Apellido, Matricula, Telefono, Mail, IdUsuario, Activo)
 VALUES
-(1, 'Juan', 'Pérez', 'MAT123', '1144556677', 'juan.perez@mail.com', 1, 1),
-(2, 'María', 'Gómez', 'MAT456', '1177889900', 'maria.gomez@mail.com', 2, 1)
+(1, 'Juan', 'Pérez', 'MAT123', '1144556677', 'juan.perez@mail.com', 1, 1),  
+(2, 'María', 'Gómez', 'MAT456', '1177889900', 'maria.gomez@mail.com', 2, 1), 
+(3, 'Roberto', 'Sosa', 'MAT789', '1100112233', 'rsosa@mail.com', 5, 0)       
 
 INSERT INTO Pacientes (DNI, Nombre, Apellido, FechaNacimiento, Telefono, Mail, IDObraSocial, IdUsuario)
 VALUES
@@ -42,9 +44,10 @@ VALUES
 
 INSERT INTO ConsultoriosxDoctor (IDDoctor, IDConsultorio, FechaContratacion)
 VALUES
-(1, 1, '2024-01-01'),
-(2, 1, '2024-01-01'),
-(1, 2, '2024-01-01')
+(1, 1, '2024-01-01'),  
+(2, 1, '2024-01-01'),  
+(1, 2, '2024-01-01'),  
+(3, 1, '2024-01-01')   
 
 INSERT INTO AgendaDoctor (IDConsultoriosxDoctor, DiaSemana, HoraInicio, HoraFin)
 VALUES
@@ -62,4 +65,3 @@ INSERT INTO GestionTurnos (IDTurno, FechaCambio, IDEstadoAnterior, IDEstadoActua
 VALUES
 (1, '2026-06-20', 1, 2, 'Confirmado por el paciente'),
 (2, '2026-06-21', 1, 3, 'Cancelado por el paciente')
-
