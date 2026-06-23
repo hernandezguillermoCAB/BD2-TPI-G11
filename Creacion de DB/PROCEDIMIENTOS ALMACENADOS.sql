@@ -4,7 +4,6 @@ CREATE PROCEDURE sp_CancelarTurno(
 )
 AS
 BEGIN
-    -- verificar si el turno existe
     IF NOT EXISTS (SELECT 1 FROM Turnos WHERE IDTurno = @IDTurno)
     BEGIN
         RAISERROR('El turno con ID %d no existe.', 16, 1, @IDTurno);
@@ -13,7 +12,6 @@ BEGIN
     DECLARE @IDEstadoAnterior INT;
     SELECT @IDEstadoAnterior = IDEstado FROM Turnos WHERE IDTurno = @IDTurno;
 
-    -- guardar el historial en GestionTurnos
     INSERT INTO GestionTurnos (IDTurno, FechaCambio, IDEstadoAnterior, IDEstadoActual, Motivo)
     VALUES (@IDTurno, CAST(GETDATE() AS DATE), @IDEstadoAnterior, 3, @Motivo);
     UPDATE Turnos
@@ -24,8 +22,7 @@ END
 --********************************************
 
 CREATE PROCEDURE sp_FiltrarxEspecialidad
-    @Especialidad varchar(100)  -- recibe el nombre y no el id ya que el paciente no sabe los id
-
+    @Especialidad varchar(100)
     AS 
         BEGIN
             IF NOT EXISTS   (SELECT 1 FROM Especialidades E
@@ -47,28 +44,20 @@ END
 
 --********************************************
 
-CREATE PROCEDURE sp_AgendarTurno(
-    @IDPaciente int,
-    @IDConsultoriosxDoctor int,
-    @Fecha date,
+ALTER PROCEDURE sp_AgendarTurno( 
+    @IDPaciente int, 
+    @IDConsultoriosxDoctor int, 
+    @Fecha date, 
     @Hora time
-)
-AS
+) 
+AS 
 BEGIN 
-
-    DECLARE @IDTurno int;
-    DECLARE @IDEstado INT = (SELECT TOP 1 IDEstado FROM EstadosTurnos WHERE Nombre = 'Pendiente');
-
-    BEGIN TRY
-        INSERT INTO Turnos (IDPaciente, IDConsultoriosxDoctor, IDEstado, Fecha, Hora)
-        VALUES (@IDPaciente, @IDConsultoriosxDoctor, @IDEstado, @Fecha, @Hora);
-
-        SET @IDTurno = SCOPE_IDENTITY();
-
-        SELECT @IDTurno AS IDTurnoAgendado;
-    END TRY
-    BEGIN CATCH
-        RAISERROR('No se pudo agendar el turno. Verifique que el paciente y el consultorio existan. Error: %s', 16, 1);
-        RETURN;
-    END CATCH
-END
+    DECLARE @IDTurno int 
+    DECLARE @IDEstado INT = (SELECT TOP 1 IDEstado FROM EstadosTurnos WHERE Nombre = 'Pendiente') 
+    
+    INSERT INTO Turnos (IDPaciente, IDConsultoriosxDoctor, IDEstado, Fecha, Hora) 
+    VALUES (@IDPaciente, @IDConsultoriosxDoctor, @IDEstado, @Fecha, @Hora)     
+    
+    SET @IDTurno = SCOPE_IDENTITY()   
+    SELECT @IDTurno as IDTurnoAgendado 
+END 
