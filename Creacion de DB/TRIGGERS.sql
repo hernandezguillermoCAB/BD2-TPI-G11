@@ -63,11 +63,10 @@ ON Turnos
 AFTER INSERT
 AS
 BEGIN;
-    -- Validamos con tu estructura de tablas real
     IF EXISTS (
         SELECT 1
         FROM inserted i
-        JOIN Pacientes p ON i.IDPaciente = p.IDPaciente --con join a pacientes para obtener la obra social del paciente
+        JOIN Pacientes p ON i.IDPaciente = p.IDPaciente 
         JOIN ConsultoriosxDoctor cxd ON i.IDConsultoriosxDoctor = cxd.IDConsultoriosxDoc 
         WHERE p.IDObraSocial IS NOT NULL 
           AND p.IDObraSocial NOT IN (
