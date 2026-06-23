@@ -1,22 +1,24 @@
 CREATE TRIGGER TR_ImpedirTurnoDoble 
-ON Turnos 	
+ON Turnos   
 AFTER INSERT, UPDATE
 AS
 BEGIN
     IF EXISTS( 
         SELECT 1
         FROM Turnos t1
-        INNER JOIN inserted i ON t1.IDPaciente = i.IDPaciente
-        WHERE t1.Fecha = i.Fecha
-          AND t1.Hora = i.Hora
-          AND t1.IDTurno != i.IDTurno
+        INNER JOIN inserted i 
+            ON t1.IDPaciente = i.IDPaciente
+           AND t1.IDTurno != i.IDTurno
+           AND CAST(t1.Fecha AS DATETIME) + CAST(t1.Hora AS DATETIME)
+               = CAST(i.Fecha AS DATETIME) + CAST(i.Hora AS DATETIME)
     )
     BEGIN
         ROLLBACK TRANSACTION 
         RAISERROR('El paciente ya tiene un turno programado para esa fecha y hora.', 16, 1) 
+        RETURN
     END
 END
-
+GO;
 --********************************************
 
   CREATE TRIGGER tr_CheckDoctorActivo ON Turnos
