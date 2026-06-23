@@ -54,14 +54,21 @@ CREATE PROCEDURE sp_AgendarTurno(
     @Hora time
 )
 AS
-BEGIN
-    DECLARE @IDTurno int
-    DECLARE @IDEstado INT = (SELECT TOP 1 IDEstado FROM EstadosTurnos WHERE Nombre = 'Pendiente')
-    INSERT INTO Turnos (IDPaciente, IDConsultoriosxDoctor, IDEstado, Fecha, Hora)
-    VALUES (@IDPaciente, @IDConsultoriosxDoctor, @IDEstado, @Fecha, @Hora)
-    
-    -- Obtener el ID del turno recién insertado    
-    SET @IDTurno = SCOPE_IDENTITY()
-    
-    SELECT @IDTurno as IDTurnoAgendado
+BEGIN 
+
+    DECLARE @IDTurno int;
+    DECLARE @IDEstado INT = (SELECT TOP 1 IDEstado FROM EstadosTurnos WHERE Nombre = 'Pendiente');
+
+    BEGIN TRY
+        INSERT INTO Turnos (IDPaciente, IDConsultoriosxDoctor, IDEstado, Fecha, Hora)
+        VALUES (@IDPaciente, @IDConsultoriosxDoctor, @IDEstado, @Fecha, @Hora);
+
+        SET @IDTurno = SCOPE_IDENTITY();
+
+        SELECT @IDTurno AS IDTurnoAgendado;
+    END TRY
+    BEGIN CATCH
+        RAISERROR('No se pudo agendar el turno. Verifique que el paciente y el consultorio existan. Error: %s', 16, 1);
+        RETURN;
+    END CATCH
 END
