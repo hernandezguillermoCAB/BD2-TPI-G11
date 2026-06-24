@@ -62,22 +62,34 @@ CREATE TRIGGER TR_ValidarCoberturaTurno
 ON Turnos
 AFTER INSERT
 AS
-BEGIN;
-    IF EXISTS (
+BEGIN
+    DECLARE @IDPaciente INT;
+    DECLARE @IDConsultoriosxDoctor INT;
+    DECLARE @IDObraSocialPaciente INT;
+    DECLARE @IDDoctor INT;
+
+    SELECT 
+        @IDPaciente = IDPaciente,
+        @IDConsultoriosxDoctor = IDConsultoriosxDoctor
+    FROM inserted;
+
+    SELECT @IDObraSocialPaciente = IDObraSocial
+    FROM Pacientes
+    WHERE IDPaciente = @IDPaciente;
+
+    SELECT @IDDoctor = IDDoctor
+    FROM ConsultoriosxDoctor
+    WHERE IDConsultoriosxDoc = @IDConsultoriosxDoctor;
+
+    IF NOT EXISTS (
         SELECT 1
-        FROM inserted i
-        JOIN Pacientes p ON i.IDPaciente = p.IDPaciente 
-        JOIN ConsultoriosxDoctor cxd ON i.IDConsultoriosxDoctor = cxd.IDConsultoriosxDoc 
-        WHERE p.IDObraSocial IS NOT NULL 
-          AND p.IDObraSocial NOT IN (
-              SELECT dos.IDObraSocial 
-              FROM DoctoresxObraSocial dos 
-              WHERE dos.IDDoctor = cxd.IDDoctor 
-                AND dos.FechaBaja IS NULL
-          )
+        FROM DoctoresxObraSocial
+        WHERE IDDoctor = @IDDoctor
+          AND IDObraSocial = @IDObraSocialPaciente
     )
     BEGIN
-        RAISERROR ('Error: El doctor asignado a este consultorio no atiende la Obra Social del paciente.', 16, 1);
         ROLLBACK TRANSACTION;
+        RAISERROR('Error: El doctor asignado a este consultorio no atiende la Obra Social del paciente.', 16, 1);
+        RETURN;
     END
 END;
